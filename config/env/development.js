@@ -1,9 +1,7 @@
 'use strict';
 
 module.exports = {
-	db: 'mongodb://publishing:lerf2586@localhost/yhall?maxPoolSize=2&socketTimeoutMS=100000000',
+
+	db: 'mongodb://lpa:lerf2586@localhost:27017/lpa'
 	
-	app: {
-		title: 'yhall'
-	}
 };

@@ -4,35 +4,23 @@
  * Module dependencies.
  */
 var express = require('express'),
-	morgan = require('morgan'),
-	bodyParser = require('body-parser'),
 	session = require('express-session'),
-	compress = require('compression'),
-	methodOverride = require('method-override'),
-	cookieParser = require('cookie-parser'),
 	helmet = require('helmet'),
-	
-	passport = require('passport'),
-	LocalStrategy = require('passport-local').Strategy,
-	
+		bodyParser = require('body-parser'),
+	compress = require('compression'),
 	mongoStore = require('connect-mongo')({
 		session: session
 	}),
 
 	User = require('../app/models/user'),
 	
-	flash = require('connect-flash'),
+	methodOverride = require('method-override'),
+
 	config = require('./config'),
 	consolidate = require('consolidate'),
 	path = require('path'),
-    cachingMiddleware = require('express-view-cache'),
-    memjs = require('memjs'),
-    pmx = require('pmx'),
-    interceptor = require('express-interceptor');
+    pmx = require('pmx');
 
-	require('./passport')(passport);
-
-  	var cors = require('express-cors');
 
 module.exports = function(db) {
 	
@@ -65,13 +53,6 @@ module.exports = function(db) {
 	});
 
 
-	app.use(cors({
-	    allowedOrigins: [
-			'meucupom.club', 'www.meucupom.club', '192.185.223.173'
-	    ],
-		headers : ['Authorization', 'Content-Type', 'X-Requested-With', 'x-language-origin']
-	}));
-
 	
 	// Passing the request url to environment locals
 	app.use(function(req, res, next) {
@@ -93,6 +74,7 @@ module.exports = function(db) {
 	// Environment dependent middleware
 	app.locals.cache = 'memory';
 
+
 	// Request body parsing middleware should be above methodOverride
 	app.use(bodyParser.urlencoded({
 		extended: true
@@ -104,8 +86,6 @@ module.exports = function(db) {
 	// Enable jsonp
 	app.enable('jsonp callback');
 
-	// CookieParser should be above session
-	app.use(cookieParser());
 
 	// Express MongoDB session storage
 	app.use(session({
@@ -118,12 +98,6 @@ module.exports = function(db) {
 		})
 	}));
 
-	// use passport session
-	app.use(passport.initialize());
-	app.use(passport.session());
-
-	// connect flash for flash messages
-	app.use(flash());
 
 	// Use helmet to secure Express headers
 	app.use(helmet.xssFilter());
@@ -135,17 +109,8 @@ module.exports = function(db) {
 	* Configurações de Cache
 	*/
 
-	var fiveMinutes = 300000;
-	var twentyMunites = 1200000;
-
-	// New call to compress content
-	app.use(compress());
-
-	//app.use('/products', cachingMiddleware(twentyMunites, {'type':'application/json', 'driver':'memjs'}));
-
-
 	// Setting the app router and static folder
-	app.use(express.static(path.resolve('./public'), {maxAge: fiveMinutes}));
+	app.use(express.static(path.resolve('./public'), {maxAge: 300000}));
 
 	// -------------------------------------------------------------------------------------------
 
@@ -181,9 +146,6 @@ module.exports = function(db) {
 
 
 	app.use(pmx.expressErrorHandler());
-
-
-
 
 
 	return app;

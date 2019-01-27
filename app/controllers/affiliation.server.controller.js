@@ -18,6 +18,8 @@ exports.create = function(req, res) {
 
     var affiliation = new Affiliation(req.body);
 
+    console.log(req.body);
+
     affiliation.save(function(err) {
 
         if (err) {

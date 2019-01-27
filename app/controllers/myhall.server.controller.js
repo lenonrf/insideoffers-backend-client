@@ -345,12 +345,12 @@ exports.deleteIfExistOffer = function (myhall, offerId, offerType){
 
 exports.list = function(req, res) {
 
-    if(req.param('affcode')){
+    if(req.params.affcode){
         exports.filterByAffiliationCode(req, res);
         return null;
     }
 
-    var limit = req.param('limit');
+    var limit = req.params.limit;
 
     MyHall.find().sort('-created')
         .limit(limit)
@@ -429,7 +429,7 @@ exports.listByAffiliation = function(req, res, next, id) {
 
 exports.filterByAffiliationCode = function(req, res) {
 
-    Affiliation.findOne({code:req.param('affcode')}).exec(function(err, affiliation) {
+    Affiliation.findOne({code: req.params.affcode}).exec(function(err, affiliation) {
 
         if(!affiliation){
             return res.jsonp({message : 'There is no affiliation for this code'});
