@@ -154,14 +154,12 @@ exports.buildUserSegmentated = function(user){
     var dateBirth = new Date(user.birthDate);
     var currentDate = new Date();
 
-    console.log('user', user);
-
     return {
 
         age : (currentDate.getFullYear() - dateBirth.getFullYear()),
         device : user.deviceAccess,
         gender : user.gender,
-        region : (_.isEmpty(user.cellphone)) ? "" : user.cellphone.substring(0, 2),
+        region : user.cellphone.substring(0, 2),
         email : user.email
     };
 };

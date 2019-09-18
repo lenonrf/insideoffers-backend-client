@@ -345,12 +345,12 @@ exports.deleteIfExistOffer = function (myhall, offerId, offerType){
 
 exports.list = function(req, res) {
 
-    if(req.query.affcode){
+    if(req.params.affcode){
         exports.filterByAffiliationCode(req, res);
         return null;
     }
 
-    var limit = req.query.limit;
+    var limit = req.params.limit;
 
     MyHall.find().sort('-created')
         .limit(limit)
@@ -429,7 +429,7 @@ exports.listByAffiliation = function(req, res, next, id) {
 
 exports.filterByAffiliationCode = function(req, res) {
 
-    Affiliation.findOne({code: req.query.affcode}).exec(function(err, affiliation) {
+    Affiliation.findOne({code: req.params.affcode}).exec(function(err, affiliation) {
 
         if(!affiliation){
             return res.jsonp({message : 'There is no affiliation for this code'});
@@ -448,14 +448,14 @@ exports.filterByAffiliationCode = function(req, res) {
                 myhall = myhall.toObject();
                         
                 request({ 
-                    uri: 'http://localhost:3009/users/email/'+req.query.user,
+                    uri: 'http://localhost:3009/users/email/'+req.param('user'),
                     method: 'GET',
                     json: {languageOrigin : 'pt-BR'}
                 }, function(error, response, user) {
 
                     if(!_.isEmpty(user)){
                         user.deviceAccess = {};  
-                        user.deviceAccess = (req.query.device) ? req.query.device : {};    
+                        user.deviceAccess = (req.param('device')) ? req.param('device') : {};    
                     }                                         
 
                     res.jsonp(
@@ -470,7 +470,7 @@ exports.filterByAffiliationCode = function(req, res) {
 
 
 
- 
+
 
 
 
@@ -503,20 +503,20 @@ exports.buildOffers = function(offerType, affiliation, user, offerTypeList){
 
     _.forEach(offerTypeList, function(offerItem, key) {
 
-        //if(Segmentation.isOfferAvailable(user, offerItem)){
+        if(Segmentation.isOfferAvailable(user, offerItem)){
 
             offers.push({
 
                 _id: offerItem._id,
-                //status: offerItem.status,
+                status: offerItem.status,
                 name: offerItem.name,
-                //segmentation: offerItem.segmentation,
-                //stats: offerItem.stats,
+                segmentation: offerItem.segmentation,
+                stats: offerItem.stats,
                 mainQuestion: offerItem.mainQuestion,
                 delivery: exports.buildDelivery(offerItem, offerType, affiliation._id),
-                //links: exports.buildOfferLinks(offerItem, affiliation)
+                links: exports.buildOfferLinks(offerItem, affiliation)
             });
-        //}
+        }
     });
 
     return offers;
