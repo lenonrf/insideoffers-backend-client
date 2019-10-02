@@ -503,20 +503,20 @@ exports.buildOffers = function(offerType, affiliation, user, offerTypeList){
 
     _.forEach(offerTypeList, function(offerItem, key) {
 
-        //if(Segmentation.isOfferAvailable(user, offerItem)){
+        if(Segmentation.isOfferAvailable(user, offerItem)){
 
             offers.push({
 
                 _id: offerItem._id,
                 //status: offerItem.status,
                 name: offerItem.name,
-                //segmentation: offerItem.segmentation,
+                segmentation: offerItem.segmentation,
                 //stats: offerItem.stats,
                 mainQuestion: offerItem.mainQuestion,
                 delivery: exports.buildDelivery(offerItem, offerType, affiliation._id),
                 //links: exports.buildOfferLinks(offerItem, affiliation)
             });
-        //}
+        }
     });
 
     return offers;
